@@ -3,15 +3,15 @@ Zombie zombie;  //set zombie as object of Zombie
 
 void setup() {
   size(1000, 1000);  //set size
-  shot = new Shooter(); //instance new shooter
-  zombi = new Zombie(0,0); //instance new Zombie
+  shooter = new Shooter(); //instance new shooter
+  zombie = new Zombie(0,0); //instance new Zombie
 }
 
 void draw() {
   background(255);  //draw white bg
   shooter.draw();   //draw shooter
   zombie.draw();    //draw zombie
-  zombie.move(shot.getX(),shot.getY()); //move to shooter
+  zombie.move(shooter.getX(),shooter.getY()); //move to shooter
 }
 
 public class Shooter {
@@ -96,5 +96,48 @@ public class Bullet{
     //draw from attribute
     line(positionX+cos(direction)*(move+10), positionY+sin(direction)*(move+10), positionX+cos(direction)*(move+20), positionY+sin(direction)*(move+20));
     move+=speed;  //update move from speed
+  }
+}
+
+public class Zombie{
+  float positionX, positionY, size,speed,zeta;
+  Zombie(){ //default constructor
+    positionX = width/2;
+    positionY = height/2;
+    size = 100;
+    zeta=0;
+    speed = 0.005;
+  }
+  Zombie(float x, float y){
+    positionX = x;
+    positionY = y;
+    size=100;
+    zeta=0;
+    speed=0.001;
+
+  }
+   Zombie(float x, float y, float zombieSize,float speedInput){  //set all attribue
+    positionX = x;
+    positionY = y;
+    size = zombieSize;
+    zeta=0;
+    speed = speedInput;
+  }
+  public void draw(){
+
+    fill(0, 255, 0);
+    ellipse(positionX, positionY, size, size);
+    line(positionX+cos(zeta-PI/3)*size/2,positionY+sin(zeta-PI/3)*size/2, positionX+cos(zeta-PI/6)*size, positionY+sin(zeta-PI/6)*size);
+    line(positionX+cos(zeta+PI/3)*size/2,positionY+sin(zeta+PI/3)*size/2, positionX+cos(zeta+PI/6)*size, positionY+sin(zeta+PI/6)*size);
+    //draw zombie and arm
+  }
+  public void move(float x, float y){
+    float targetX = x;
+    float targetY = y;
+    float distanceX = targetX-positionX; //find distance
+    float distanceY = targetY-positionY;
+    positionX += distanceX*speed;   //update position form distance and speed
+    positionY += distanceY*speed;
+    zeta = atan(distanceY/distanceX); //update new angle
   }
 }
