@@ -58,3 +58,21 @@ public class Shooter {
     return direction;
   }
 }
+
+public class Bullet{
+  float positionX,positionY,speed,move,direction; //set attribute
+
+  Bullet(float x, float y, float direct){ //set start point and direction
+    positionX = x;
+    positionY = y;
+    direction = direct;
+    move=0;
+    speed=5;
+  }
+
+  public void drawBullet(){
+    //draw from attribute
+    line(positionX+cos(direction)*(move+10), positionY+sin(direction)*(move+10), positionX+cos(direction)*(move+20), positionY+sin(direction)*(move+20));
+    move+=speed;  //update move from speed
+  }
+}
