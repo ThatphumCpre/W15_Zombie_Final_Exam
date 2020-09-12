@@ -1,19 +1,27 @@
 Shooter shooter; //set shooter as object of Shooter
+Zombie zombie;  //set zombie as object of Zombie
 
 void setup() {
   size(1000, 1000);  //set size
-  shooter = new Shooter(); //instance new shooter
+  shot = new Shooter(); //instance new shooter
+  zombi = new Zombie(0,0); //instance new Zombie
 }
 
 void draw() {
   background(255);  //draw white bg
   shooter.draw();   //draw shooter
+  zombie.draw();    //draw zombie
+  zombie.move(shot.getX(),shot.getY()); //move to shooter
 }
 
 public class Shooter {
   float positionX, positionY, size, direction, speed; //set attribute
+  int bulletCount;
+  Bullet[] bullet;
 
   Shooter() {
+    bullet = new Bullet[1000];  //create empty bullet array
+    bulletCount=0;  //count for bullet that was create
     positionX = width/2; //default x position
     positionY = height/2; //default y position
     direction = 0;  // set direction as default
@@ -33,9 +41,23 @@ public class Shooter {
       } else if (key == 'a' || key == 'A') {  //a make it turn left
         this.move(0, -1);
       }
-
+        else if (key == ' ' ){
+          bullet[bulletCount] = new Bullet(positionX+cos(direction)*size, positionY+sin(direction)*size, direction); //create new bullet
+          bulletCount += 1; //count bullet
+          delay(30);
+        }
     }
 
+    for(int i=bulletCount-1;i>=0;i--){  //for loop in bullet was create
+      bullet[i].drawBullet(); //draw each bullet
+
+      if (frameCount%300==0){       //reset bullet after time
+        bullet = new Bullet[1000];
+        bulletCount = 0;
+        break;
+      }
+
+    }
     strokeWeight(5); //increase stoke size
     ellipse(positionX, positionY, size, size);  //draw shooter
     line(positionX+cos(direction)*size/2, positionY+sin(direction)*size/2, positionX+cos(direction)*size, positionY+sin(direction)*size);
