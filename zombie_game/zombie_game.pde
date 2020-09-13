@@ -58,13 +58,13 @@ public class Shooter {
     }
 
     for (int i=bulletCount-1; i>=0; i--) {  //for loop in bullet was create
-      bullet[i].drawBullet(); //draw each bullet
+      bullet[i].drawBullet(i); //draw each bullet
 
-      if (frameCount%300==0) {       //reset bullet after time
+      /*if (frameCount%300==0) {       //reset bullet after time
         bullet = new Bullet[1000];
         bulletCount = 0;
         break;
-      }
+      }*/
     }
     strokeWeight(5); //increase stoke size
     fill(255); //fill color with white
@@ -107,10 +107,38 @@ public class Bullet {
     speed=5;
   }
 
-  public void drawBullet() {
+  public void drawBullet(int bulletNumber) {
     //draw from attribute
     line(positionX+cos(direction)*(move+10), positionY+sin(direction)*(move+10), positionX+cos(direction)*(move+20), positionY+sin(direction)*(move+20));
     move+=speed;  //update move from speed
+    if (positionX+cos(direction)*(move+20) < 0 || positionX+cos(direction)*(move+20) > width){
+      if (bulletNumber < shooter.getBullet()){
+        arraycopy(bullet, bulletNumber+1, bullet, bulletNumber, shooter.getBullet()-(bulletNumber+1));
+        bullet =(Bullet[]) shorten(bullet);
+        shooter.setBullet(shooter.getBullet()-1);
+      }
+      else{
+        bullet =(Bullet[]) shorten(bullet);
+        shooter.setBullet(shooter.getBullet()-1);
+      }
+      arraycopy(bullet, bulletReserve);
+      bullet = new Bullet[1000];
+      arraycopy(bulletReserve, bullet);
+    }
+    else if (positionY+sin(direction)*(move+20) < 0 || positionY+sin(direction)*(move+20) > height){
+      if (bulletNumber < shooter.getBullet()){
+        arraycopy(bullet, bulletNumber+1, bullet, bulletNumber, shooter.getBullet()-(bulletNumber+1));
+        bullet =(Bullet[]) shorten(bullet);
+        shooter.setBullet(shooter.getBullet()-1);
+      }
+      else{
+        bullet =(Bullet[]) shorten(bullet);
+        shooter.setBullet(shooter.getBullet()-1);
+      }
+      arraycopy(bullet, bulletReserve);
+      bullet = new Bullet[1000];
+      arraycopy(bulletReserve, bullet);
+    }
   }
   
   public float getX() {  //getter method
