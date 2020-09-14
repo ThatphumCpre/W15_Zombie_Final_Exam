@@ -1,7 +1,9 @@
 Shooter shooter; //set shooter as object of Shooter
 Zombie[] zombie, zombieReserve;  //set zombie as object of Zombie
 Bullet[] bullet, bulletReserve; //set bullet as object of bullet
-int zombieCount;
+boolean k_Up, k_Down, k_Left, k_Right, k_SP;
+boolean freeze = false;
+int zombieCount, canshoot;
   void setup() {
   size(1000, 1000);  //set size
   shooter = new Shooter(); //instance new shooter
@@ -14,6 +16,7 @@ int zombieCount;
 }
 
 void draw() {
+  if(!freeze){
   background(255);  //draw white bg
   shooter.draw();   //draw shooter
   if (frameCount%120==0 && zombieCount<20){
@@ -23,9 +26,46 @@ void draw() {
   for (int i=zombieCount-1; i>=0; i--) {  //for loop in zombie was create
     zombie[i].draw();    //draw zombie
     zombie[i].move(shooter.getX(), shooter.getY()); //move to shooter
+    if(zombie[i].player_die(shooter.getX(), shooter.getY())){
+      print("die");
+      freeze = true;}
     zombie[i].die(i);
   }
+  }
 }
+public void keyPressed() {
+  int k_ey = int(key);
+  if(k_ey > 96){k_ey = k_ey-32;}
+  setMove(k_ey, true);
+  }
+ 
+  public void keyReleased() {
+    int k_ey = int(key);
+    if(k_ey > 96){k_ey = k_ey-32;}
+    setMove(k_ey, false);
+  }
+  
+public boolean setMove(int k, boolean b) {
+    switch (k) {
+    case 87:
+      return k_Up = b;
+ 
+    case 83:
+      return k_Down = b;
+ 
+    case 65:
+      return k_Left = b;
+ 
+    case 68:
+      return k_Right = b;
+      
+    case 32:
+      return k_SP = b;
+ 
+    default:
+      return b;
+    }
+  }
 
 public class Shooter {
   float positionX, positionY, size, direction, speed; //set attribute
@@ -42,20 +82,25 @@ public class Shooter {
 
 
   public void draw() {
-    if (keyPressed) {  //if key Pressed
-      if (key == 'w' || key == 'W') {   //w make it forward
-        this.move(1, 0);
-      } else if (key == 's' || key == 'S') {  //s make it backward
-        this.move(-1, 0);
-      } else if (key == 'd' || key == 'D') {  //d make it turn right
-        this.move(0, 1);
-      } else if (key == 'a' || key == 'A') {  //a make it turn left
-        this.move(0, -1);
-      } else if (key == ' ' && frameCount%5==0) {
-        bullet[bulletCount] = new Bullet(positionX+cos(direction)*size, positionY+sin(direction)*size, direction); //create new bullet
-        bulletCount += 1; //count bullet
+      if (k_Up) {   //w make it forward
+        this.move(1, 0);} 
+      if (k_Down) {  //s make it backward
+        this.move(-1, 0);} 
+      if (k_Right) {  //d make it turn right
+        this.move(0, 1);} 
+      if (k_Left) {  //a make it turn left
+        this.move(0, -1);} 
+      if (k_SP) {
+        if(canshoot == 0){
+          bullet[bulletCount] = new Bullet(positionX+cos(direction)*size, positionY+sin(direction)*size, direction); //create new bullet
+          bulletCount += 1; //count bullet
+          canshoot = 1;
+       }
       }
-    }
+      if(frameCount%50==0){
+          canshoot = 0;}
+    
+    
 
     for (int i=bulletCount-1; i>=0; i--) {  //for loop in bullet was create
       bullet[i].drawBullet(i); //draw each bullet
@@ -71,6 +116,10 @@ public class Shooter {
     ellipse(positionX, positionY, size, size);  //draw shooter
     line(positionX+cos(direction)*size/2, positionY+sin(direction)*size/2, positionX+cos(direction)*size, positionY+sin(direction)*size);
   }
+  
+ 
+  
+  
 
   public void move(int move, int turn) {
     float newRadius = turn*2*PI/360;  //turn degree to radius
@@ -149,6 +198,7 @@ public class Bullet {
   }
 }
 
+
 public class Zombie {
   float positionX, positionY, size, speed, zeta;
   Zombie() { //default constructor
@@ -176,8 +226,8 @@ public class Zombie {
 
     fill(0, 255, 0);
     ellipse(positionX, positionY, size, size);
-    line(positionX+cos(zeta-PI/3)*size/2, positionY+sin(zeta-PI/3)*size/2, positionX+cos(zeta-PI/6)*size, positionY+sin(zeta-PI/6)*size);
-    line(positionX+cos(zeta+PI/3)*size/2, positionY+sin(zeta+PI/3)*size/2, positionX+cos(zeta+PI/6)*size, positionY+sin(zeta+PI/6)*size);
+    line(positionX+cos(zeta-PI/3)*size/2, positionY+sin(zeta-PI/3)*size/2, positionX+cos(zeta-PI/7)*size, positionY+sin(zeta-PI/7)*size);
+    line(positionX+cos(zeta+PI/3)*size/2, positionY+sin(zeta+PI/3)*size/2, positionX+cos(zeta+PI/7)*size, positionY+sin(zeta+PI/7)*size);
     //draw zombie and arm
   }
   public void move(float x, float y) {
@@ -194,7 +244,19 @@ public class Zombie {
     else if (targetX<positionX && targetY < positionY){
       zeta -= PI;
     }
+
   }
+  public boolean player_die(float x,float y){
+    float targetX = x;
+    float targetY = y;
+    if(dist(positionX, positionY, targetX, targetY) <= 115){
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
+
   
   public void die(int zombieNumber){
     for (int i=0; i<shooter.getBullet(); i++) {  //for loop in bullet was create
