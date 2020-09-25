@@ -21,7 +21,7 @@ void draw() {
   shooter.draw();   //draw shooter
   if (frameCount%120==0 && zombieCount<20){
     zombie[zombieCount] = new Zombie(random(0,width),0);
-    zombieCount += 1; 
+    zombieCount += 1;
   }
   for (int i=zombieCount-1; i>=0; i--) {  //for loop in zombie was create
     zombie[i].draw();    //draw zombie
@@ -32,36 +32,45 @@ void draw() {
     zombie[i].die(i);
   }
   }
+  for(int i=zombieCount-1; i>=0 ; i--){  //check all zombie
+    for (int j=zombieCount-1; j>=0; j--){       //compair to all zombie
+      if (j!=i){       //if not same zombie
+        zombie[i].overlap(zombie[j]);     //check overlap
+      }
+    }
+  }
+
 }
+
 public void keyPressed() {
   int k_ey = int(key);
   if(k_ey > 96){k_ey = k_ey-32;}
   setMove(k_ey, true);
   }
- 
+
   public void keyReleased() {
     int k_ey = int(key);
     if(k_ey > 96){k_ey = k_ey-32;}
     setMove(k_ey, false);
   }
-  
+
 public boolean setMove(int k, boolean b) {
     switch (k) {
     case 87:
       return k_Up = b;
- 
+
     case 83:
       return k_Down = b;
- 
+
     case 65:
       return k_Left = b;
- 
+
     case 68:
       return k_Right = b;
-      
+
     case 32:
       return k_SP = b;
- 
+
     default:
       return b;
     }
@@ -83,13 +92,13 @@ public class Shooter {
 
   public void draw() {
       if (k_Up) {   //w make it forward
-        this.move(1, 0);} 
+        this.move(1, 0);}
       if (k_Down) {  //s make it backward
-        this.move(-1, 0);} 
+        this.move(-1, 0);}
       if (k_Right) {  //d make it turn right
-        this.move(0, 1);} 
+        this.move(0, 1);}
       if (k_Left) {  //a make it turn left
-        this.move(0, -1);} 
+        this.move(0, -1);}
       if (k_SP) {
         if(canshoot == 0){
           bullet[bulletCount] = new Bullet(positionX+cos(direction)*size, positionY+sin(direction)*size, direction); //create new bullet
@@ -99,8 +108,8 @@ public class Shooter {
       }
       if(frameCount%50==0){
           canshoot = 0;}
-    
-    
+
+
 
     for (int i=bulletCount-1; i>=0; i--) {  //for loop in bullet was create
       bullet[i].drawBullet(i); //draw each bullet
@@ -116,10 +125,10 @@ public class Shooter {
     ellipse(positionX, positionY, size, size);  //draw shooter
     line(positionX+cos(direction)*size/2, positionY+sin(direction)*size/2, positionX+cos(direction)*size, positionY+sin(direction)*size);
   }
-  
- 
-  
-  
+
+
+
+
 
   public void move(int move, int turn) {
     float newRadius = turn*2*PI/360;  //turn degree to radius
@@ -189,7 +198,7 @@ public class Bullet {
       arraycopy(bulletReserve, bullet);
     }
   }
-  
+
   public float getX() {  //getter method
     return positionX+cos(direction)*(move+10);
   }
@@ -223,8 +232,7 @@ public class Zombie {
     speed = speedInput;
   }
   public void draw() {
-
-    fill(0, 255, 0);
+    fill(40,140,40);
     ellipse(positionX, positionY, size, size);
     line(positionX+cos(zeta-PI/3)*size/2, positionY+sin(zeta-PI/3)*size/2, positionX+cos(zeta-PI/7)*size, positionY+sin(zeta-PI/7)*size);
     line(positionX+cos(zeta+PI/3)*size/2, positionY+sin(zeta+PI/3)*size/2, positionX+cos(zeta+PI/7)*size, positionY+sin(zeta+PI/7)*size);
@@ -245,6 +253,22 @@ public class Zombie {
       zeta -= PI;
     }
 
+
+  }
+
+  public void overlap(Zombie obj){
+    if (dist(positionX,positionY,obj.positionX,obj.positionY) < 100 && obj.positionX > positionX){ //if is overlap and obj is below that this
+      positionX -= 1;  //detach each other
+      obj.positionX += 1;
+
+    }
+    if (dist(positionX,positionY,obj.positionX,obj.positionY) < 100 && obj.positionY > positionY){  //if is overlap and obj is right of this
+      positionY -= 1; //detach each other 
+      obj.positionY += 1;
+
+    }
+
+
   }
   public boolean player_die(float x,float y){
     float targetX = x;
@@ -257,10 +281,10 @@ public class Zombie {
     }
   }
 
-  
+
   public void die(int zombieNumber){
     for (int i=0; i<shooter.getBullet(); i++) {  //for loop in bullet was create
-      float dis = dist(bullet[i].getX(), bullet[i].getY(), positionX, positionY); //distance between head of bullet and center of each zombie 
+      float dis = dist(bullet[i].getX(), bullet[i].getY(), positionX, positionY); //distance between head of bullet and center of each zombie
       if (dis < size/2){ //if distance  not over radius  means bullet hit zombie
         if (i < zombie.length-1){
           arraycopy(zombie, zombieNumber+1, zombie, zombieNumber, zombie.length-(zombieNumber+1));  //move i object to most right array
