@@ -286,10 +286,14 @@ public class Zombie {
     for (int i=0; i<shooter.getBullet(); i++) {  //for loop in bullet was create
       float dis = dist(bullet[i].getX(), bullet[i].getY(), positionX, positionY); //distance between head of bullet and center of each zombie
       if (dis < size/2){ //if distance  not over radius  means bullet hit zombie
-        if (i < zombie.length-1){
+        if (i < zombie.length-1  ){
+          println(zombie[i].size);
+          zombie[i].size = zombie[i].size + zombie[i].size*0.2;
+          if(zombie[i].size > 172){
           arraycopy(zombie, zombieNumber+1, zombie, zombieNumber, zombie.length-(zombieNumber+1));  //move i object to most right array
           zombie =(Zombie[]) shorten(zombie);       //remove most right object
           zombieCount-=1;
+          }
           if (i < bullet.length-1){
             arraycopy(bullet, i+1, bullet, i, shooter.getBullet()-(i+1));
             bullet =(Bullet[]) shorten(bullet);
