@@ -210,6 +210,8 @@ public class Bullet {
 
 public class Zombie {
   float positionX, positionY, size, speed, zeta;
+  int frame;
+  boolean freeze;
   Zombie() { //default constructor
     positionX = width/2;
     positionY = height/2;
@@ -239,6 +241,7 @@ public class Zombie {
     //draw zombie and arm
   }
   public void move(float x, float y) {
+    if( this.freeze == false){
     float targetX = x;
     float targetY = y;
     float distanceX = targetX-positionX; //find distance
@@ -253,7 +256,14 @@ public class Zombie {
       zeta -= PI;
     }
 
-
+    }
+    else if (frameCount==frame + 100){
+      this.size = this.size - this.size*0.2;
+      frame = frameCount;
+    }
+    else if (this.size < 100){
+      this.freeze = false;
+    }
   }
 
   public void overlap(Zombie obj){
@@ -280,6 +290,10 @@ public class Zombie {
       return false;
     }
   }
+  
+  public Zombie shoted(Zombie shot){
+    return shot;
+  }
 
 
   public void die(int zombieNumber){
@@ -288,7 +302,9 @@ public class Zombie {
       if (dis < size/2){ //if distance  not over radius  means bullet hit zombie
         if (i < zombie.length-1  ){
           println(zombie[i].size);
+          zombie[zombieNumber].frame = frameCount;
           zombie[zombieNumber].size = zombie[zombieNumber].size + zombie[zombieNumber].size*0.2;
+          zombie[zombieNumber].freeze = true;
           if(zombie[zombieNumber].size > 172){
           arraycopy(zombie, zombieNumber+1, zombie, zombieNumber, zombie.length-(zombieNumber+1));  //move i object to most right array
           zombie =(Zombie[]) shorten(zombie);       //remove most right object
