@@ -288,8 +288,8 @@ public class Zombie {
       if (dis < size/2){ //if distance  not over radius  means bullet hit zombie
         if (i < zombie.length-1  ){
           println(zombie[i].size);
-          zombie[i].size = zombie[i].size + zombie[i].size*0.2;
-          if(zombie[i].size > 172){
+          zombie[zombieNumber].size = zombie[zombieNumber].size + zombie[zombieNumber].size*0.2;
+          if(zombie[zombieNumber].size > 172){
           arraycopy(zombie, zombieNumber+1, zombie, zombieNumber, zombie.length-(zombieNumber+1));  //move i object to most right array
           zombie =(Zombie[]) shorten(zombie);       //remove most right object
           zombieCount-=1;
